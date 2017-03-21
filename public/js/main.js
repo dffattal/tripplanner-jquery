@@ -62,6 +62,14 @@ $(function initializeMap (){
 
 });
 
+var list = {
+  1: {
+    hotels: [],
+    restaurants: [],
+    activities: []
+  }
+}
+
 for(var i=0;i<hotels.length;i++){
   $('#hotel-choices').append('<option>' + hotels[i].name + '</option>');
 }
@@ -76,17 +84,67 @@ for(var i=0;i<activities.length;i++){
 
 $('#hotel-btn').on('click',function(evt){
   var hotel = $('#hotel-choices').val();
-  $('#create-hotel').append('<div class="itinerary-item"><span class="title">'+hotel+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>');
-
+  // $('#create-hotel').append('<div class="itinerary-item"><span class="title">'+hotel+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>');
+  let currDay = $('.current-day')[0].textContent
+  if (list[currDay]) {
+    if (list[currDay].hotels) {
+      list[currDay].hotels.push(hotel)
+    } else {
+      list[currDay].hotels = [hotel]
+    }
+  } else {
+    list[currDay] = {}
+    list[currDay].hotels = [hotel]
+  }
 })
 
 $('#rest-btn').on('click',function(evt){
   var rest = $('#restaurant-choices').val();
-  $('#create-rest').append('<div class="itinerary-item"><span class="title">'+rest+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>');
+  // $('#create-rest').append('<div class="itinerary-item"><span class="title">'+rest+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>');
+  let currDay = $('.current-day')[0].textContent
+  if (list[currDay]) {
+    if (list[currDay].restaurants) {
+      list[currDay].restaurants.push(rest)
+    } else {
+      list[currDay].restaurants = [rest]
+    }
+  } else {
+    list[currDay] = {}
+    list[currDay].restaurants = [rest]
+  }
 })
 
 $('#act-btn').on('click',function(evt){
   var act = $('#activity-choices').val();
-  $('#create-act').append('<div class="itinerary-item"><span class="title">'+act+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>');
+  // $('#create-act').append('<div class="itinerary-item"><span class="title">'+act+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>');
+  let currDay = $('.current-day')[0].textContent
+  if (list[currDay]) {
+    if (list[currDay].activities) {
+      list[currDay].activities.push(act)
+    } else {
+      list[currDay].activities = [act]
+    }
+  } else {
+    list[currDay] = {}
+    list[currDay].activities = [act]
+  }
 })
 
+$('#itinerary').on('click', '.remove', function(evt) {
+  this.parentNode.remove()
+})
+
+$('#day-add').on('click', function() {
+  var newDayNum = Number($('#day-add').prev()[0].textContent) + 1
+  $('#day-add').before('<button class="btn btn-circle day-num day-btn">' + newDayNum + '</button>')
+})
+
+$('.day-buttons').on('click', '.day-num', function(evt) {
+  $('.current-day').removeClass('current-day')
+  console.log(this)
+  $(this).addClass('current-day')
+})
+
+function showList() {
+
+}
