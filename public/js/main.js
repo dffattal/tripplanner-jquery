@@ -46,21 +46,22 @@ $(function initializeMap (){
     activity: '/images/star-3.png'
   };
 
-  function drawMarker (type, coords) {
+  var arr = [];
+
+  function drawMarker (type, coords,name) {
     var latLng = new google.maps.LatLng(coords[0], coords[1]);
     var iconURL = iconURLs[type];
     var marker = new google.maps.Marker({
       icon: iconURL,
       position: latLng
     });
+    arr.push({name: name, marker: marker });
     marker.setMap(currentMap);
   }
 
   // drawMarker('hotel', [40.705137, -74.007624]);
   // drawMarker('restaurant', [40.705137, -74.013940]);
   // drawMarker('activity', [40.716291, -73.995315]);
-
-});
 
 var list = {
   1: {
@@ -84,7 +85,15 @@ for(var i=0;i<activities.length;i++){
 
 $('#hotel-btn').on('click',function(evt){
   var hotel = $('#hotel-choices').val();
-  // $('#create-hotel').append('<div class="itinerary-item"><span class="title">'+hotel+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>');
+  create('#create-hotel',hotel);
+
+  for(var i=0;i<hotels.length;i++){
+    if(hotels[i].name === hotel){
+      drawMarker('hotel', hotels[i].place.location, hotel);
+      break;
+    }
+  }
+
   let currDay = $('.current-day')[0].textContent
   if (list[currDay]) {
     if (list[currDay].hotels) {
@@ -100,7 +109,15 @@ $('#hotel-btn').on('click',function(evt){
 
 $('#rest-btn').on('click',function(evt){
   var rest = $('#restaurant-choices').val();
-  // $('#create-rest').append('<div class="itinerary-item"><span class="title">'+rest+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>');
+  create('#create-rest',rest);
+
+  for(var i=0;i<restaurants.length;i++){
+    if(restaurants[i].name === rest){
+      drawMarker('restaurant', restaurants[i].place.location, rest)
+      break;
+    }
+  }
+
   let currDay = $('.current-day')[0].textContent
   if (list[currDay]) {
     if (list[currDay].restaurants) {
@@ -116,7 +133,15 @@ $('#rest-btn').on('click',function(evt){
 
 $('#act-btn').on('click',function(evt){
   var act = $('#activity-choices').val();
-  // $('#create-act').append('<div class="itinerary-item"><span class="title">'+act+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>');
+  create('#create-act',act);
+
+  for(var i=0;i<activities.length;i++){
+    if(activities[i].name === act){
+      drawMarker('activity', activities[i].place.location, act)
+      break;
+    }
+  }
+
   let currDay = $('.current-day')[0].textContent
   if (list[currDay]) {
     if (list[currDay].activities) {
@@ -131,6 +156,14 @@ $('#act-btn').on('click',function(evt){
 })
 
 $('#itinerary').on('click', '.remove', function(evt) {
+  let name = this.parentNode.firstChild.textContent
+  for(var i=0;i<arr.length;i++){
+    if(arr[i].name === name){
+      arr[i].marker.setMap(null);
+      arr.splice(i,1);
+    }
+  }
+
   this.parentNode.remove()
 })
 
@@ -145,6 +178,23 @@ $('.day-buttons').on('click', '.day-num', function(evt) {
   $(this).addClass('current-day')
 })
 
-function showList() {
+
+
+function showList(day) {
+
+  for(var key in list[day]){
+    let data = list[day][key];
+    for(var j=0; j<data.length; j++){
+      create(data[j])
+
+    }
+
+  }
 
 }
+
+function create(classVal, val){
+  $(classVal).append('<div class="itinerary-item"><span class="title">'+val+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>')
+}
+
+});
