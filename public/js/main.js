@@ -176,6 +176,8 @@ $('.day-buttons').on('click', '.day-num', function(evt) {
   $('.current-day').removeClass('current-day')
   $(this).addClass('current-day')
   showList(this.textContent)
+  var self = this
+  $('#day-title').children()[0].textContent = 'Day ' + self.textContent
 })
 
 
@@ -212,17 +214,21 @@ $('.btn-xs').on('click', function() {
   var day = $('.current-day')[0].textContent
   var currentDay = $('.current-day')
   currentDay.prev().addClass('current-day')
-  var dayChanger = Number(day) - 1
-  currentDay.nextAll().textContent = dayChanger++
+  var siblings = $(currentDay).siblings()
   currentDay.remove()
   showList(Number(day) - 1)
   var dayList = Object.keys(list)
-  for (var i = Number(day); i < dayList.length - 1; i++) {
-    console.log(list[i])
-    list[i] = list[i+1]
+  for (var p = Number(day); p < dayList.length; p++) {
+    console.log(list[p])
+    list[p] = list[p+1]
   }
   list[dayList.length] = null
-
+  for (var m = 0; m < siblings.length; m++) {
+    if (Number(siblings[m].textContent) > day) {
+      siblings[m].textContent = Number(siblings[m].textContent) - 1
+    }
+  }
+  $('#day-title').children()[0].textContent = 'Day ' + (day - 1)
 
 })
 
