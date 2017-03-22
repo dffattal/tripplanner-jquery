@@ -174,24 +174,57 @@ $('#day-add').on('click', function() {
 
 $('.day-buttons').on('click', '.day-num', function(evt) {
   $('.current-day').removeClass('current-day')
-  console.log(this)
   $(this).addClass('current-day')
+  showList(this.textContent)
 })
 
 
-
 function showList(day) {
-
+  for (var k = 0; k < arr.length; k++) {
+    arr[k].marker.setMap(null)
+  }
+  $('#create-hotel').children().remove()
+  $('#create-rest').children().remove()
+  $('#create-act').children().remove()
   for(var key in list[day]){
     let data = list[day][key];
     for(var j=0; j<data.length; j++){
-      create(data[j])
-
+      if (key === 'hotels') {
+        var keyId = '#create-hotel'
+      }
+      else if (key === 'restaurants') {
+        var keyId = '#create-rest'
+      } else {
+        var keyId = '#create-act'
+      }
+      create(keyId, data[j])
+      for (var l = 0; l < arr.length; l++) {
+        if (data[j] === arr[l].name) {
+          arr[l].marker.setMap(currentMap)
+          break;
+        }
+      }
     }
-
   }
-
 }
+
+$('.btn-xs').on('click', function() {
+  var day = $('.current-day')[0].textContent
+  var currentDay = $('.current-day')
+  currentDay.prev().addClass('current-day')
+  var dayChanger = Number(day) - 1
+  currentDay.nextAll().textContent = dayChanger++
+  currentDay.remove()
+  showList(Number(day) - 1)
+  var dayList = Object.keys(list)
+  for (var i = Number(day); i < dayList.length - 1; i++) {
+    console.log(list[i])
+    list[i] = list[i+1]
+  }
+  list[dayList.length] = null
+
+
+})
 
 function create(classVal, val){
   $(classVal).append('<div class="itinerary-item"><span class="title">'+val+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>')
